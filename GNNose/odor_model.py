@@ -11,8 +11,6 @@ class GraphClassifier(torch.nn.Module):
     def __init__(self, in_channels, out_channels, pooling_type='mean'):
         super().__init__()
         self.mlp = torch.nn.Linear(in_channels, out_channels)
-        self.clf = XGBClassifier(tree_method='gpu_hist',
-                             num_class = 6,objective = 'multi:softprob')
         if pooling_type == 'mean':
           self.pool = global_mean_pool
         elif pooling_type == 'max':
@@ -20,9 +18,12 @@ class GraphClassifier(torch.nn.Module):
         elif pooling_type == 'add':
           self.pool = global_add_pool
 
-    def forward(self, x, batch):
+    def forward(self, x, y, batch):
         x = self.pool(x, batch)
-        preds = self.clf.predict(x.detach().cpu().numpy())
+        x = self.mlp(x)
+        clf = XGBClassifier(tree_method='gpu_hist', num_class = 2)
+        clf.fit(x.detach().cpu().numpy(), y.detach().cpu().numpy())
+        preds = clf.predict(x.detach().cpu().numpy())
         preds = torch.tensor(preds)
         return preds
         return torch.sigmoid(self.mlp(x))
@@ -44,9 +45,9 @@ class ScentClassifier(torch.nn.Module):
         self.gnn.reset_parameters()
         self.classifier.reset_parameters()
 
-    def forward(self, x, edge_index, batch=torch.tensor([0])):
+    def forward(self, x, y, edge_index, batch=torch.tensor([0])):
         h = self.gnn(x, edge_index)
-        return self.classifier(h, batch)
+        return self.classifier(h, y, batch)
 
 class PretrainingGIN(torch.nn.Module):
     def __init__(self, in_channels, hidden_channels, num_layers, out_channels, dropout=0, pooling_type='max'):

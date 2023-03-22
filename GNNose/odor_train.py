@@ -27,7 +27,7 @@ def train(model, optimizer, train_loader, mode, device, weighted_BCE=False, ema=
     for data in train_loader:
         data = data.to(device)
         optimizer.zero_grad()
-        out = model(data.x, data.edge_index, data.batch)
+        out = model(data.x, data.y, data.edge_index, data.batch)
         
         if ema:
             with ema.average_parameters():
