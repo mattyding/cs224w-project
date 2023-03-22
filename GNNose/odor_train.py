@@ -49,7 +49,7 @@ def train(model, optimizer, train_loader, mode, device, weighted_BCE=False, ema=
             if ema:
                 ema.update()
 
-        total_loss += loss.item() 
+        total_loss += loss.item() / data.num_graphs
 
     return total_loss / len(train_loader.dataset)
 
