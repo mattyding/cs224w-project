@@ -47,9 +47,8 @@ def pretrain(model, optimizer, epoch, mode, dataloader, device):
             optimizer.step()
 
         # keep track of loss values
-        total_loss += loss.item() * data.num_graphs
-        total_graphs += data.num_graphs
+        total_loss += loss.item() 
 
     # gather the results for the epoch
-    epoch_loss = total_loss / total_graphs
+    epoch_loss = total_loss / len(dataloader.dataset)
     return epoch_loss

@@ -40,10 +40,9 @@ def train(model, optimizer, train_loader, mode, device, weighted_BCE=False):
             loss.backward()
             optimizer.step()
 
-        total_loss += float(loss) * data.num_graphs
-        total_graphs += data.num_graphs
+        total_loss += float(loss) 
 
-    return total_loss / total_graphs
+    return total_loss / len(train_loader.dataset)
 
 @torch.no_grad()
 def test(model, loader, device):
