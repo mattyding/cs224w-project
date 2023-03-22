@@ -49,9 +49,9 @@ def train(model, optimizer, train_loader, mode, device, weighted_BCE=False, ema=
             if ema:
                 ema.update()
 
-        total_loss += loss.item() / data.num_graphs
+        total_loss += loss.item()
 
-    return total_loss / len(train_loader.dataset)
+    return total_loss / len(train_loader.dataset)  # normalized by size of set
 
 @torch.no_grad()
 def test(model, loader, device):
