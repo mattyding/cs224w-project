@@ -25,7 +25,7 @@ def load_dataset_df(name):
 
     elif name == 'ol': 
         # dream olfaction dataset 
-        df_ol = pd.read_csv('data/ol_train.csv')
+        df_ol = pd.read_csv('cs224w-project/data/ol_train.csv')
 
         pungent_ol = set(df_ol[df_ol['SENTENCE'].str.contains('pungent')]['SMILES'])
         not_pungent_ol = set(df_ol[~df_ol['SENTENCE'].str.contains('pungent')]['SMILES'])
