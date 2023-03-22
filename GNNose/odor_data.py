@@ -25,7 +25,7 @@ def load_dataset_df(name):
 
     elif name == 'ol': 
         # dream olfaction dataset 
-        df_ol = pd.read_csv('GNNose/data/ol_train.csv') # TODO: fix this path
+        df_ol = pd.read_csv('data/ol_train.csv')
 
         pungent_ol = set(df_ol[df_ol['SENTENCE'].str.contains('pungent')]['SMILES'])
         not_pungent_ol = set(df_ol[~df_ol['SENTENCE'].str.contains('pungent')]['SMILES'])
@@ -49,7 +49,7 @@ def df_to_pyg(df):
     for i in range(len(df)):
         graph_list[i].x = graph_list[i].x.float()
 
-    # incorporate edge features
+    # incorporate edge features (sum pooling)
     for mol in graph_list:
         if (len(mol.edge_index) == 0) or len(mol.edge_attr) == 0:
             # no edge features, concat 0s
