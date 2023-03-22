@@ -1,10 +1,9 @@
 import torch 
 import numpy as np
 
-
 sigmoid_cutoff = 0.5 
 
-def train(model, optimizer, train_loader, mode, device, weighted_BCE=False):
+def train(model, optimizer, train_loader, mode, device, weighted_BCE=False, ema=None):
     def get_class_weights():
         one_count = 0
         zero_count = 0
@@ -30,17 +29,27 @@ def train(model, optimizer, train_loader, mode, device, weighted_BCE=False):
         optimizer.zero_grad()
         out = model(data.x, data.edge_index, data.batch)
         
-        if weighted_BCE:
-            batch_weight = (data.y==1) * weight[0] + (data.y==0)*weight[1]
-            loss = torch.nn.BCELoss(weight=batch_weight)(out.squeeze(), data.y)
+        if ema:
+            with ema.average_parameters():
+                if weighted_BCE:
+                    batch_weight = (data.y==1) * weight[0] + (data.y==0)*weight[1]
+                    loss = torch.nn.BCELoss(weight=batch_weight)(out.squeeze(), data.y)
+                else:
+                    loss = torch.nn.BCELoss()(out.squeeze(), data.y)
         else:
-            loss = torch.nn.BCELoss()(out.squeeze(), data.y)
+            if weighted_BCE:
+                batch_weight = (data.y==1) * weight[0] + (data.y==0)*weight[1]
+                loss = torch.nn.BCELoss(weight=batch_weight)(out.squeeze(), data.y)
+            else:
+                loss = torch.nn.BCELoss()(out.squeeze(), data.y)
 
         if mode == "train":
             loss.backward()
             optimizer.step()
+            if ema:
+                ema.update()
 
-        total_loss += float(loss) 
+        total_loss += loss.item() 
 
     return total_loss / len(train_loader.dataset)
 
