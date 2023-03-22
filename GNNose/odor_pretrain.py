@@ -26,7 +26,8 @@ def pretrain(model, optimizer, epoch, mode, dataloader, device):
     # contrastive_fn = jensen_shannon() # default to infonce loss 
     contrastive_fn = infonce() # default to infonce loss 
 
-    losses = []
+    total_loss = 0
+    total_graphs = 0
     for data in dataloader:
         data.to(device)
         # readout_anchor is the embedding of the original datapoint x on passing through the model
@@ -46,8 +47,9 @@ def pretrain(model, optimizer, epoch, mode, dataloader, device):
             optimizer.step()
 
         # keep track of loss values
-        losses.append(loss.item())
+        total_loss += loss.item() * data.num_graphs
+        total_graphs += data.num_graphs
 
     # gather the results for the epoch
-    epoch_loss = sum(losses) / len(losses)
+    epoch_loss = total_loss / total_graphs
     return epoch_loss

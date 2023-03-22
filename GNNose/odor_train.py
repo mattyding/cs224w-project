@@ -4,7 +4,7 @@ import numpy as np
 
 sigmoid_cutoff = 0.5 
 
-def train(model, optimizer, train_loader, device, weighted_BCE=False):
+def train(model, optimizer, train_loader, mode, device, weighted_BCE=False):
     def get_class_weights():
         one_count = 0
         zero_count = 0
@@ -15,8 +15,13 @@ def train(model, optimizer, train_loader, device, weighted_BCE=False):
         diff = (weight[0] - weight[1]) 
         return [1 - ((1 - diff) / 2), (1 - diff) / 2]
 
-    model.train()
+    if mode == "train":
+        model.train()
+    elif mode == "val" or mode == "test":
+        model.eval()
+
     total_loss = 0
+    total_graphs = 0
     
     weight = get_class_weights()
 
@@ -31,11 +36,14 @@ def train(model, optimizer, train_loader, device, weighted_BCE=False):
         else:
             loss = torch.nn.BCELoss()(out.squeeze(), data.y)
 
-        loss.backward()
-        optimizer.step()
+        if mode == "train":
+            loss.backward()
+            optimizer.step()
 
         total_loss += float(loss) * data.num_graphs
-    return total_loss / len(train_loader.dataset)
+        total_graphs += data.num_graphs
+
+    return total_loss / total_graphs
 
 @torch.no_grad()
 def test(model, loader, device):
