@@ -18,18 +18,18 @@ def load_dataset_df(name):
         # leffingwell dataset
         lw_behavior = pyrfume.load_data('leffingwell/behavior.csv', remote=True)
 
-        pungent_lw = set(lw_behavior[lw_behavior['pungent'] == 1]['IsomericSMILES'])
-        not_pungent_lw = set(lw_behavior[lw_behavior['pungent'] == 0]['IsomericSMILES'])
-        df_lw = {chem: 1 if chem in pungent_lw else 0 for chem in pungent_lw.union(not_pungent_lw)}
+        pungent_lw = list(lw_behavior[lw_behavior['pungent'] == 1]['IsomericSMILES'])
+        not_pungent_lw = list(lw_behavior[lw_behavior['pungent'] == 0]['IsomericSMILES'])
+        df_lw = {chem: 1 if chem in pungent_lw else 0 for chem in pungent_lw + not_pungent_lw}
         return pd.DataFrame(df_lw.items(), columns=['SMILES', 'pungent'])
 
     elif name == 'ol': 
         # dream olfaction dataset 
         df_ol = pd.read_csv('cs224w-project/data/ol_train.csv')
 
-        pungent_ol = set(df_ol[df_ol['SENTENCE'].str.contains('pungent')]['SMILES'])
-        not_pungent_ol = set(df_ol[~df_ol['SENTENCE'].str.contains('pungent')]['SMILES'])
-        df_ol = {chem: 1 if chem in pungent_ol else 0 for chem in pungent_ol.union(not_pungent_ol)}
+        pungent_ol = list(df_ol[df_ol['SENTENCE'].str.contains('pungent')]['SMILES'])
+        not_pungent_ol = list(df_ol[~df_ol['SENTENCE'].str.contains('pungent')]['SMILES'])
+        df_ol = {chem: 1 if chem in pungent_ol else 0 for chem in pungent_ol + not_pungent_ol}
         return pd.DataFrame(df_ol.items(), columns=['SMILES', 'pungent'])
 
     else:
