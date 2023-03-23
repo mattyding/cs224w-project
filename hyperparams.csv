@@ -1,5 +1,5 @@
 , Leffingwell Training, Leffingwell Pretraining, DREAM Training, DEAM Pretraining
-batch_size, 32, 64 64, 64
+batch_size, 32, 64, 64, 64
 lr, 1e-2, 5e-4, 1e-3, 1e-3
 weight_decay, 1e-3, 1e-5, 1e-6, 1e-6
 dropout, 0.5, 0.8, 0.5, 0.5
