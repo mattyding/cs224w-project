@@ -1,0 +1,7 @@
+, Leffingwell Pretraining, Leffingwell Training, DREAM Training
+batch_size, 64, 128, x
+lr, 5e-4, 1e-2, x
+weight_decay, 1e-5, 1e-3, x
+dropout, 0.8, 0.5, x
+hidden_hannels,  64, 64, x
+num_layers, 1, 1, x
