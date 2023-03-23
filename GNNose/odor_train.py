@@ -4,7 +4,9 @@ import numpy as np
 sigmoid_cutoff = 0.5 
 
 def train(model, optimizer, train_loader, mode, device, weighted_BCE=False, ema=None):
+    """Train a model for one epoch."""
     def get_class_weights():
+        """Get the class weights based on frequency across the set."""
         one_count = 0
         zero_count = 0
         for data in train_loader:
@@ -20,7 +22,6 @@ def train(model, optimizer, train_loader, mode, device, weighted_BCE=False, ema=
         model.eval()
 
     total_loss = 0
-    total_graphs = 0
     
     weight = get_class_weights()
 
@@ -29,6 +30,7 @@ def train(model, optimizer, train_loader, mode, device, weighted_BCE=False, ema=
         optimizer.zero_grad()
         out = model(data.x, data.edge_index, data.batch)
         
+        # determine loss, optionally weighted
         if ema:
             with ema.average_parameters():
                 if weighted_BCE:
@@ -55,6 +57,7 @@ def train(model, optimizer, train_loader, mode, device, weighted_BCE=False, ema=
 
 @torch.no_grad()
 def test(model, loader, device):
+    """Evaluate a model on a test set."""
     model.eval()
 
     total_correct = 0

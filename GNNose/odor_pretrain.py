@@ -27,7 +27,7 @@ def pretrain(model, optimizer, epoch, mode, dataloader, device):
     contrastive_fn = infonce() # default to infonce loss 
 
     total_loss = 0
-    total_graphs = 0
+
     for data in dataloader:
         data.to(device)
         # readout_anchor is the embedding of the original datapoint x on passing through the model

@@ -8,6 +8,7 @@ from data import MyDataset
 
 
 def plot_losses(train_losses, val_losses, title=None):
+    """Utility method to plot paired loss curves"""
     plt.plot(range(len(val_losses)), val_losses, label='val')
     plt.plot(range(len(train_losses)), train_losses, label='train')
     plt.legend()
@@ -15,11 +16,13 @@ def plot_losses(train_losses, val_losses, title=None):
     plt.show()
 
 def plot_loss(losses, title=None):
+    """Utility method to plot single loss curve"""
     plt.plot(range(len(losses)), losses)
     plt.title(title)
     plt.show()
 
 def nx_draw_molecule(x, edge_index, title=None, savepath=None):
+    """Draw a molecule as a networkx graph"""
     data = Data(x=x, edge_index=edge_index)
     networkX_graph = to_networkx(data, node_attrs=["x"])
     nx.draw_networkx(
@@ -35,6 +38,8 @@ def nx_draw_molecule(x, edge_index, title=None, savepath=None):
 
 def plot_augmentation_example(val_set, example_index, augmentation_type, savedir='.'):
     """
+    Visualize an example of an original vs. augmented graph from the dataset.
+
     Example usage:    
     plot_augmentation_example(val_set, 1, 'node_dropping')
     plot_augmentation_example(val_set, 1, 'edge_perturbation')

@@ -7,6 +7,7 @@ from torch_geometric.nn.models import GAT, GIN
 from torch_geometric.nn import global_mean_pool, global_add_pool, global_max_pool
 
 class GraphClassifier(torch.nn.Module):
+    """Module containing a node pooling layer and binary classifier head."""
     def __init__(self, in_channels, out_channels, pooling_type='mean'):
         super().__init__()
         self.mlp = torch.nn.Linear(in_channels, out_channels)
@@ -26,6 +27,7 @@ class GraphClassifier(torch.nn.Module):
 
 
 class ScentClassifier(torch.nn.Module):
+    """Module containing a GNN with a binary classifier head."""
     def __init__(self, in_channels, hidden_channels, num_layers, out_channels, dropout=0, pooling_type='mean'):
         super().__init__()
         self.gnn = GIN(
@@ -43,6 +45,7 @@ class ScentClassifier(torch.nn.Module):
         return self.classifier(h, batch)
 
 class PretrainingGIN(torch.nn.Module):
+    """Module containing a GIN and pooling layer to generate graph-level embeddings."""
     def __init__(self, in_channels, hidden_channels, num_layers, out_channels, dropout=0, pooling_type='max'):
         super().__init__()
         self.gnn = GIN(
